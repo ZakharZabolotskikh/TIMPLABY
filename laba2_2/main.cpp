@@ -18,6 +18,6 @@ void check(string Text, int key) {
 }
 
 int main() {
-    check("ArtemVestaArtemVesta", 6);
+    check("Lexalada", 4);
     return 0;
 }
