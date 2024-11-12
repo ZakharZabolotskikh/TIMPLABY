@@ -10,7 +10,7 @@ string Cipher::encryption(string& text) {
     string t = getValidOpenText(text);
     int k = 0;
     int simvoli = t.size();
-    int stroki = ((simvoli - 1) / key) + 1;
+    int stroki = ((simvoli) / key);
     
     char** tabl = new char*[stroki];
     for (int i = 0; i < stroki; i++)
