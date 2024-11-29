@@ -1,32 +1,39 @@
-pragma once
-#include <vector>
-#include <string>
-#include <map>
-#include <codecvt>
+#include <cmath>
+#include <cctype>
 #include <locale>
+#include <codecvt>
 #include <iostream>
-class Cipher
+#include <string>
+
+class CipherError : public std::invalid_argument
 {
-private:
-	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> codec;
-	int columns, rows, len_text;
 public:
-	Cipher()=delete;
-	Cipher(const std::wstring & ws_key);
-	std::wstring encrypt(const std::wstring& ws_open_text);
-	std::wstring decrypt(const std::wstring& ws_cipher_text);
-	void set_tableform(const std::wstring& ws_text);
-	void set_key(std::wstring & ws_key);
-	int getValidKey(std::wstring& ws_key);
-	std::wstring getValidOpenText(const std::wstring & ws_open_text);
-	std::wstring getValidCipherText(const std::wstring & ws_cipher_text);
+    explicit CipherError(const std::wstring& what_arg)
+        : std::invalid_argument(wstring_to_string(what_arg))
+    {}
+
+private:
+    static std::wstring string_to_wstring(const std::string& str) {
+        std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+        return converter.from_bytes(str);
+    }
+
+    static std::string wstring_to_string(const std::wstring& wstr) {
+        std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+        return converter.to_bytes(wstr);
+    }
 };
 
-class cipher_error: public std::invalid_argument
+class RouteCipher
 {
 public:
-	explicit cipher_error (const std::string& what_arg):
-		std::invalid_argument(what_arg) {}
-	explicit cipher_error (const char* what_arg):
-		std::invalid_argument(what_arg) {}
+    static int getValidColumns(int columns);
+    static std::wstring encrypt(const std::wstring& plaintext, int columns);
+    static std::wstring decrypt(const std::wstring& ciphertext, int columns);
+    static std::wstring getValidPlainText(const std::wstring& s);
+    static std::wstring getValidCipherText(const std::wstring& s);
+
+private:
+    static std::wstring string_to_wstring(const std::string& str);
+    static std::string wstring_to_string(const std::wstring& wstr);
 };
