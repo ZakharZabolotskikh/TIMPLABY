@@ -1,90 +1,73 @@
 #include <UnitTest++/UnitTest++.h>
 #include "modAlphaCipher.h"
-SUITE(KeyTest)
+#include <locale>
+#include <iostream>
+#include <codecvt>
+
+std::string wstring_to_string(const std::wstring& wstr)
 {
-TEST(ValidKey) {
-CHECK_EQUAL("ВГАОКПЬЬЛТТЕЯЕШЛПЫУ",SwapCipher(7).encrypt("П
-ЕТЬКАВЫШЕЛПОГУЛЯТЬ"));
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    return converter.to_bytes(wstr);
 }
-TEST(LongKey) {
-CHECK_EQUAL("ЬТЯЛУГОПЛЕШЫВАКЬТЕП",SwapCipher(100).encrypt(
-"ПЕТЬКАВЫШЕЛПОГУЛЯТЬ"));
-}
-TEST(MinusInKey) {
-CHECK_THROW(SwapCipher cp(-245),cipher_error);
-}
-TEST(ZeroInKey) {
-CHECK_THROW(SwapCipher cp(0),cipher_error);
-}
-}
-struct KeyB_fixture {
-SwapCipher * p;
-KeyB_fixture() {
-p = new SwapCipher(5);
-}
-~KeyB_fixture() {
-delete p;
-}
-};
-SUITE(EncryptTest)
+
+SUITE(RouteCipherTest)
 {
-TEST_FIXTURE(KeyB_fixture, UpCaseString) {
-CHECK_EQUAL("КЕУЬШГЬТЫОТЕВПЯПАЛЛ",
-p->encrypt("ПЕТЬКАВЫШЕЛПОГУЛЯТЬ"));
+    TEST(ValidEncryptionAndDecryption)
+    {
+        CHECK_EQUAL(wstring_to_string(L"ОРНВИАДЗ"), wstring_to_string(RouteCipher::encrypt(L"ДИНОЗАВР", 4)));
+        CHECK_EQUAL(wstring_to_string(L"ДИНОЗАВР"), wstring_to_string(RouteCipher::decrypt(L"ОРНВИАДЗ", 4)));
+    }
+
+    TEST(LowCaseString)
+    {
+        CHECK_EQUAL(wstring_to_string(L"УАЕНКМРВЙИ"), wstring_to_string(RouteCipher::encrypt(L"муравейник", 2)));
+        CHECK_EQUAL(wstring_to_string(L"МУРАВЕЙНИК"), wstring_to_string(RouteCipher::decrypt(L"УАЕНКМРВЙИ", 2)));
+    }
+
+    TEST(EmptyTextEncryptionAndDecryption)
+    {
+        CHECK_THROW(RouteCipher::encrypt(L"", 5), CipherError);
+        CHECK_THROW(RouteCipher::decrypt(L"", 5), CipherError);
+    }
+
+    TEST(StringWithWhitespaceAndPunct)
+    {
+        CHECK_EQUAL(wstring_to_string(L"ОРНВИАДЗ"), wstring_to_string(RouteCipher::encrypt(L"ДИНОЗАВР", 4)));
+        CHECK_EQUAL(wstring_to_string(L"ДИНОЗАВР"), wstring_to_string(RouteCipher::decrypt(L"ОРНВИАДЗ", 4)));
+    }
+
+    TEST(NegativeColumnsEncryptionAndZeroColumnsDecryption)
+    {
+        CHECK_THROW(RouteCipher::encrypt(L"текст", -2), CipherError);
+        CHECK_THROW(RouteCipher::decrypt(L"Текст", 0), CipherError);
+    }
+
+    TEST(StringWithNumbers)
+    {
+        CHECK_THROW(RouteCipher::encrypt(L"Пр1в3т", 4), CipherError);
+        CHECK_THROW(RouteCipher::decrypt(L"ПР1В3Т", 4), CipherError);
+    }
+
+    TEST(InvalidPlaintextAndCiphertext)
+    {
+        CHECK_THROW(RouteCipher::encrypt(L"7782", 4), CipherError);
+        CHECK_THROW(RouteCipher::encrypt(L"*%:)", 4), CipherError);
+        CHECK_THROW(RouteCipher::decrypt(L"*%:)", 4), CipherError);
+        CHECK_THROW(RouteCipher::decrypt(L"7782", 4), CipherError);
+    }
+
+    TEST(MaximumColumnsEncryptionAndDecryption)
+    {
+        CHECK_EQUAL(wstring_to_string(L"ДИНОЗАВР"), wstring_to_string(RouteCipher::encrypt(L"ДИНОЗАВР", 1)));
+        CHECK_EQUAL(wstring_to_string(L"ДИНОЗАВР"), wstring_to_string(RouteCipher::decrypt(L"ДИНОЗАВР", 1)));
+        CHECK_EQUAL(wstring_to_string(L"РВАЗОНИД"), wstring_to_string(RouteCipher::encrypt(L"ДИНОЗАВР", 8)));
+        CHECK_EQUAL(wstring_to_string(L"ДИНОЗАВР"), wstring_to_string(RouteCipher::decrypt(L"РВАЗОНИД", 8)));
+    }
 }
-TEST_FIXTURE(KeyB_fixture, LowCaseString) {
-CHECK_EQUAL("КЕУЬШГЬТЫОТЕВПЯПАЛЛ",
-p->encrypt("петькавышелпогулять"));
-}
-TEST_FIXTURE(KeyB_fixture, StringWithWhitspaceAndPunct) {
-CHECK_EQUAL("КЕУЬШГЬТЫОТЕВПЯПАЛЛ",
-p->encrypt("Петька вышел погулять!!!"));
-}
-TEST_FIXTURE(KeyB_fixture, StringWithNumbers) {
-CHECK_EQUAL("ЛЛАИИРРРВИБЯКЛСЗ", p->encrypt("Кирилл брился
-в 2019 раз"));
-}
-TEST_FIXTURE(KeyB_fixture, EmptyString) {
-CHECK_THROW(p->encrypt(""),cipher_error);
-}
-TEST_FIXTURE(KeyB_fixture, NoAlphaString) {
-CHECK_THROW(p->encrypt("1234+8765=9999"),cipher_error);
-}
-TEST(MaxShiftKey) {
-CHECK_EQUAL("ЬТЯЛУГОПЛЕШЫВАКЬТЕП",
-SwapCipher(23852).encrypt("ПЕТЬКАВЫШЕЛПОГУЛЯТЬ
-"));
-}
-}
-SUITE(DecryptText)
-{
-TEST_FIXTURE(KeyB_fixture, LowCaseString) {
-CHECK_THROW(p-
->decrypt("кеУЬШГЬСЫОТАВПЯВАЛЛ"),cipher_error);
-}
-TEST_FIXTURE(KeyB_fixture, WhitespaceString) {
-CHECK_THROW(p->decrypt("КЕУ   ЬШГ   ЬТЫ   ОТЕ   ВПЯ
-ПАЛЛ"),cipher_error);
-}
-TEST_FIXTURE(KeyB_fixture, DigitsString) {
-CHECK_THROW(p-
->decrypt("ЛЛАИИРРРВИБ2019ЯКЛСЗ"),cipher_error);
-}
-TEST_FIXTURE(KeyB_fixture, PunctString) {
-CHECK_THROW(p-
->decrypt("КЕУЬШГ,ЬТЫОТЕВПЯПАЛЛ"),cipher_error);
-}
-TEST_FIXTURE(KeyB_fixture, EmptyString) {
-CHECK_THROW(p->decrypt(""),cipher_error);
-}
-TEST(MaxShiftKey) {
-		CHECK_EQUAL("ЬТЯЛУГОПЛЕШЫВАКЬТЕП",
-		            codec.to_bytes(modAlphaCipher(L"Я").decrypt(L"ПЕТЬКАВЫШЕЛПОГУЛЯТЬ")));
-	}
-}
+
 int main(int argc, char **argv)
 {
-	locale loc("ru_RU.UTF-8");
-	locale::global(loc);
-	return UnitTest::RunAllTests();
+    std::locale loc("ru_RU.UTF-8");
+    std::locale::global(loc);
+    return UnitTest::RunAllTests();
 }
