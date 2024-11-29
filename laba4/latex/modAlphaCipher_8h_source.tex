@@ -1,0 +1,36 @@
+\hypertarget{modAlphaCipher_8h_source}{}\doxysection{mod\+Alpha\+Cipher.\+h}
+\mbox{\hyperlink{modAlphaCipher_8h}{См. документацию.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{10 \textcolor{preprocessor}{\#include <string>}}
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <map>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <stdexcept>}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <locale>}}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 \textcolor{keyword}{using namespace }std;}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{24 \textcolor{keyword}{class }\mbox{\hyperlink{classmodAlphaCipher}{modAlphaCipher}} \{}
+\DoxyCodeLine{25 \textcolor{keyword}{private}:}
+\DoxyCodeLine{26     wstring \mbox{\hyperlink{classmodAlphaCipher_a9f83731ae4d58df14e1df3bd089d7501}{numAlpha}} = L\textcolor{stringliteral}{"{}АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"{}}; }
+\DoxyCodeLine{27     map<wchar\_t, int> \mbox{\hyperlink{classmodAlphaCipher_ace08758022c05ba498735fd1494254f7}{alphaNum}}; }
+\DoxyCodeLine{28     vector<int> \mbox{\hyperlink{classmodAlphaCipher_a318efb0cdcd8bc0c084097e175c2006b}{key}}; }
+\DoxyCodeLine{29 }
+\DoxyCodeLine{35     vector<int> \mbox{\hyperlink{classmodAlphaCipher_a2abdae53ae554f35e97332145ef201e1}{convert}}(\textcolor{keyword}{const} wstring\& s);}
+\DoxyCodeLine{36 }
+\DoxyCodeLine{42     wstring \mbox{\hyperlink{classmodAlphaCipher_a247b687296399baaa09f96ce43def048}{convert}}(\textcolor{keyword}{const} vector<int>\& v);}
+\DoxyCodeLine{43 }
+\DoxyCodeLine{49     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classmodAlphaCipher_a2bb85466032e4562232e4089b0828c16}{isValid}}(\textcolor{keyword}{const} wstring \&s); \textcolor{comment}{// Объявление функции проверки}}
+\DoxyCodeLine{50 }
+\DoxyCodeLine{51 \textcolor{keyword}{public}:}
+\DoxyCodeLine{57     \mbox{\hyperlink{classmodAlphaCipher_a4f0a86c20f5d836f66cb1e640d875e6b}{modAlphaCipher}}() = \textcolor{keyword}{delete};}
+\DoxyCodeLine{58 }
+\DoxyCodeLine{64     \mbox{\hyperlink{classmodAlphaCipher_a5e2b42f76c91038870412d0b14d31544}{modAlphaCipher}}(\textcolor{keyword}{const} wstring\& skey);}
+\DoxyCodeLine{65 }
+\DoxyCodeLine{72     wstring \mbox{\hyperlink{classmodAlphaCipher_ad540be3199da225a63a9589ca62347ce}{encrypt}}(\textcolor{keyword}{const} wstring\& open\_text);}
+\DoxyCodeLine{73 }
+\DoxyCodeLine{80     wstring \mbox{\hyperlink{classmodAlphaCipher_ae7880f197cbe27f8659455cc4c9020fb}{decrypt}}(\textcolor{keyword}{const} wstring\& cipher\_text);}
+\DoxyCodeLine{81 \};}
+
+\end{DoxyCode}

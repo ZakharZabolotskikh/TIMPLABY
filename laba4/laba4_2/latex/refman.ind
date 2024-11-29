@@ -1,0 +1,34 @@
+\begin{theindex}
+
+  \item {/home/stud/laba4/modAlphaCipher.h}, \hyperpage{9}
+
+  \indexspace
+
+  \item {convert}
+    \subitem {modAlphaCipher}, \hyperpage{6, 7}
+
+  \indexspace
+
+  \item {decrypt}
+    \subitem {modAlphaCipher}, \hyperpage{7}
+
+  \indexspace
+
+  \item {encrypt}
+    \subitem {modAlphaCipher}, \hyperpage{8}
+
+  \indexspace
+
+  \item {isValid}
+    \subitem {modAlphaCipher}, \hyperpage{8}
+
+  \indexspace
+
+  \item {modAlphaCipher}, \hyperpage{5}
+    \subitem {convert}, \hyperpage{6, 7}
+    \subitem {decrypt}, \hyperpage{7}
+    \subitem {encrypt}, \hyperpage{8}
+    \subitem {isValid}, \hyperpage{8}
+    \subitem {modAlphaCipher}, \hyperpage{6}
+
+\end{theindex}
