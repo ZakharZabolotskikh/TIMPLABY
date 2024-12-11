@@ -8,7 +8,7 @@
 class modAlphaCipher
 {
 private:
-    std::string numAlpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    std::string numAlpha = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
     std::map<char, int> alphaNum;
     std::vector<int> key; // ключ
 
