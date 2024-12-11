@@ -6,32 +6,32 @@ SUITE(KeyTest)
 {
     TEST(ValidKey)
     {
-        CHECK_EQUAL("BCDBC", modAlphaCipher("BCD").encrypt("AAA AA"));
+        CHECK_EQUAL("БВГБВ", modAlphaCipher("БВГ").encrypt("ААА АА"));
     }
     
     TEST(LongKey)
     {
-        CHECK_EQUAL("BCDEF", modAlphaCipher("BCDEFGHIJK").encrypt("AAAAA"));
+        CHECK_EQUAL("БВГДЕ", modAlphaCipher("БВГДЕЖЗИЙК").encrypt("ААААА"));
     }
     
     TEST(LowCaseKey)
     {
-        CHECK_EQUAL("BCDBC", modAlphaCipher("bcd").encrypt("AAA AA"));
+        CHECK_EQUAL("БВГБВ", modAlphaCipher("бвг").encrypt("ААА АА"));
     }
     
     TEST(DigitsInKey)
     {
-        CHECK_THROW(modAlphaCipher cp("B1"), cipher_error);
+        CHECK_THROW(modAlphaCipher cp("Б1"), cipher_error);
     }
     
     TEST(PunctuationInKey)
     {
-        CHECK_THROW(modAlphaCipher cp("B,C"), cipher_error);
+        CHECK_THROW(modAlphaCipher cp("Б,В"), cipher_error);
     }
     
     TEST(WhitespaceInKey)
     {
-        CHECK_THROW(modAlphaCipher cp("B C"), cipher_error);
+        CHECK_THROW(modAlphaCipher cp("Б В"), cipher_error);
     }
     
     TEST(EmptyKey)
@@ -41,7 +41,7 @@ SUITE(KeyTest)
     
     TEST(WeakKey)
     {
-        CHECK_THROW(modAlphaCipher cp("AAA"), cipher_error);
+        CHECK_THROW(modAlphaCipher cp("ААА"), cipher_error);
     }
 }
 
@@ -51,7 +51,7 @@ struct KeyB_fixture
     
     KeyB_fixture()
     {
-        p = new modAlphaCipher("B");
+        p = new modAlphaCipher("Б");
     }
     
     ~KeyB_fixture()
@@ -64,22 +64,25 @@ SUITE(EncryptTest)
 {
     TEST_FIXTURE(KeyB_fixture, UpCaseString)
     {
-        CHECK_EQUAL("UIFRVJDLCSPXOGPYKVNQTPWFSUIFMBAZEPH", p->encrypt("THEQUICKBROWNFOXJUMPSOVERTHELAZYDOG"));
+        CHECK_EQUAL("УЙГРЙЕОКДСЗОГПРЕЛМОЦРХУЙФМУЛБЕЯЖХЕА",
+                    p->encrypt("СКОРОБУДЕТНОВЫЙГОД"));
     }
     
     TEST_FIXTURE(KeyB_fixture, LowCaseString)
     {
-        CHECK_EQUAL("UIFRVJDLCSPXOGPYKVNQTPWFSUIFMBAZEPH", p->encrypt("thequickbrownfoxjumpsoverthelazydog"));
+        CHECK_EQUAL("УЙГРЙЕОКДСЗОГПРЕЛМОЦРХУЙФМУЛБЕЯЖХЕА",
+                    p->encrypt("скоро будет новый год"));
     }
     
-    TEST_FIXTURE(KeyB_fixture, StringWithWhitspaceAndPunct)
+    TEST_FIXTURE(KeyB_fixture, StringWithWhitespaceAndPunct)
     {
-        CHECK_EQUAL("UIFRVJDLCSPXOGPYKVNQTPWFSUIFMBAZEPH", p->encrypt("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG))"));
+        CHECK_EQUAL("УЙГРЙЕО КДСЗОГ ПРЕЛМОЦРХ УЙФМУЛБЕ ЯЖХЕА",
+                    p->encrypt("СКОРО БУДЕТ НОВЫЙ ГОД!!"));
     }
     
     TEST_FIXTURE(KeyB_fixture, StringWithNumbers)
     {
-        CHECK_EQUAL("IBQQZOFXZFBS", p->encrypt("Happy New 2025 Year"));
+        CHECK_THROW(p->encrypt("СЧАСТЛИВОГО2025ГОДА"), cipher_error);
     }
     
     TEST_FIXTURE(KeyB_fixture, EmptyString)
@@ -89,13 +92,13 @@ SUITE(EncryptTest)
     
     TEST_FIXTURE(KeyB_fixture, NoAlphaString)
     {
-        CHECK_THROW(p->encrypt("88005553535"), cipher_error);
+        CHECK_THROW(p->encrypt("123456"), cipher_error);
     }
     
     TEST(MaxShiftKey)
     {
-        CHECK_EQUAL("SGDPTHBJAQNVMENWITLORNUDQSGDKZYXCNF",
-                     modAlphaCipher("Z").encrypt("THEQUICKBROWNFOXJUMPSOVER THELAZYDOG"));
+        CHECK_EQUAL("РЙНПСАТДГЗЕОГУКДЗБКЩЙМПРОЖЗРЯШХФЧДЗ",
+                     modAlphaCipher("Я").encrypt("СКОРОБЫДЕТНОВЫЙГОД"));
     }
 }
 
@@ -103,27 +106,27 @@ SUITE(DecryptText)
 {
     TEST_FIXTURE(KeyB_fixture, UpCaseString)
     {
-        CHECK_EQUAL("THEQUICKBROWNFOXJUMPSOVERTHELAZYDOG", p->decrypt("UIFRVJDLCSPXOGPYKVNQTPWFSUIFMBAZEPH"));
+        CHECK_EQUAL("СКОРОБУДЕТНОВЫЙГОД", p->decrypt("ТЛПЛСПУЁИАЙСКЩБЧОЩПСЗФЛШЮГКЪДМЗЖДГБ"));
     }
     
     TEST_FIXTURE(KeyB_fixture, LowCaseString)
     {
-        CHECK_THROW(p->decrypt("uifRVJDLCSPXOGPYKVNQTPWFSUIFMBAZEPH"), cipher_error);
+        CHECK_THROW(p->decrypt("тлплспУЁИАЙСКЩБЧОЩПСЗФЛШЮГКЪДМЗЖДГБ"), cipher_error);
     }
     
     TEST_FIXTURE(KeyB_fixture, WhitespaceString)
     {
-        CHECK_THROW(p->decrypt("UIF RVJDL CSPXO GPY KVNQT PWFS UIFMBAZ EPH"), cipher_error);
+        CHECK_THROW(p->decrypt("ТЛПЛ СП УЁИАЙСК ЩБЧОЩПСЗФ ЛШЮГКЪДМ ЗЖДГБ"), cipher_error);
     }
     
     TEST_FIXTURE(KeyB_fixture, DigitsString)
     {
-        CHECK_THROW(p->decrypt("IBQQZOFX2019ZFBS"), cipher_error);
+        CHECK_THROW(p->decrypt("ТЛПЛС2025ПУЁИА"), cipher_error);
     }
     
     TEST_FIXTURE(KeyB_fixture, PunctString)
     {
-        CHECK_THROW(p->decrypt("IFMMP,XPSME"), cipher_error);
+        CHECK_THROW(p->decrypt("ТЛПЛ,СПУЁИА"), cipher_error);
     }
     
     TEST_FIXTURE(KeyB_fixture, EmptyString)
@@ -133,8 +136,8 @@ SUITE(DecryptText)
     
     TEST(MaxShiftKey)
     {
-        CHECK_EQUAL("THEQUICKBROWNFOXJUMPSOVERTHELAZYDOG",
-                     modAlphaCipher("Z").decrypt("SGDPTHBJAQNVMENWITLORNUDQ SGDKZYXCNF"));
+        CHECK_EQUAL("СКОРОБУДЕТНОВЫЙГОД",
+                     modAlphaCipher("Я").decrypt("РЙНПСАТДГЗЕОГУКДЗБКЩЙМПРОЖЗРЯШХФЧДЗ"));
     }
 }
 
